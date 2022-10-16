@@ -6,13 +6,15 @@ var dice4        =  0;
 
 //int
 var coins        =  0;
-var coinGain     =  0;
+var coinGain     =  10;
 var health       =  50;
 var damage       =  1;
 var powDamage    =  5;
+var powCount     =  0;
 var shieldCount  =  0;
 var healCount    =  0;
 var betValue     =  10;
+var betIncrease  =  10;
 
 //bool
 var placedBet    =  false;
@@ -26,7 +28,7 @@ const placeBet   =  document.getElementById("placeBet");
 const powerUp    =  document.getElementById("powerUp");
 const useShield  =  document.getElementById("useShield");
 const useHeal    =  document.getElementById("useHeal");
-const coins      =  document.getElementById("coins");
+const coinsText  =  document.getElementById("coinsCount");
 const healthText =  document.getElementById("health");
 
 //enemy int
@@ -44,13 +46,24 @@ var enemyHeal    =  false;
 //interval
 setInterval(() => {
     if (usedPowerUp == true || usedShield == true || usedHeal == true) {
-        useShield.classList.add("enabled");
-        useHeal.classList.add("enabled");
-        powerUp.classList.add("enabled");
+        useShield.classList.add("disabled");
+        useHeal.classList.add("disabled");
+        powerUp.classList.add("disabled");
+    } else {
+        useShield.classList.remove("disabled");
+        useHeal.classList.remove("disabled");
+        powerUp.classList.remove("disabled");
     }
 
-    healthText.innerHTML() = "Coins: " + coins; 
-});
+    if (placedBet == true) {
+        placeBet.classList.add("disabled");
+    } else {
+        placeBet.classList.remove("disabled");
+    }
+
+    coinsText.innerHTML = "Coins: " + coins;
+    healthText.innerHTML = "HP: " + health;
+}, 100);
 
 //event listeners
 rollDice.addEventListener("click", () => {
@@ -60,14 +73,16 @@ rollDice.addEventListener("click", () => {
 placeBet.addEventListener("click", () => {
     if (coins >= betValue) {
         placedBet = true;
+        coins -= betValue;
     } else {
         swal("Not enough coins.", "", "error");
     }
 });
 
 powerUp.addEventListener("click", () => {
-    if (powerUp > 0) {
-        usedPowerUp == true;
+    if (powCount > 0) {
+        usedPowerUp = true;
+        powCount--;
         useShield.classList.add("disabled");
         useHeal.classList.add("disabled");
         powerUp.classList.add("disabled");
@@ -78,7 +93,8 @@ powerUp.addEventListener("click", () => {
 
 useShield.addEventListener("click", () => {
     if (shieldCount > 0) {
-        usedShield == true;
+        usedShield = true;
+        shieldCount--;
         useShield.classList.add("disabled");
         useHeal.classList.add("disabled");
         powerUp.classList.add("disabled");
@@ -89,7 +105,8 @@ useShield.addEventListener("click", () => {
 
 useHeal.addEventListener("click", () => {
     if (healCount > 0) {
-        usedHeal == true;
+        usedHeal = true;
+        healCount--;
         useShield.classList.add("disabled");
         useHeal.classList.add("disabled");
         powerUp.classList.add("disabled");
@@ -101,10 +118,10 @@ useHeal.addEventListener("click", () => {
 //functions
 function diceRoll() {
     let randomNumber = [
-        Math.floor(Math.random() * 8) + 1,
-        Math.floor(Math.random() * 8) + 1,
-        Math.floor(Math.random() * 8) + 1,
-        Math.floor(Math.random() * 8) + 1
+        Math.floor(Math.random() * 6) + 1,
+        Math.floor(Math.random() * 6) + 1,
+        Math.floor(Math.random() * 6) + 1,
+        Math.floor(Math.random() * 6) + 1
     ];
 
     dice1 = randomNumber[0];
@@ -129,41 +146,35 @@ function calcDice(dice1, dice2, dice3, dice4) {
 function doDamage() {
     if (placedBet == true) {
         coins += betValue * 2;
-
-        if (enemyBet == true) {
-            enemyCoins -= betValue * 2;
-        } else {
-            enemyCoins += coinGain;
-        }
-
-        betValue += 10;
+        betValue += betIncrease;
     }
 
-    if (powerUp == true) {
+    if (usedPowerUp == true) {
         enemyHP -= powDamage;
-        powerUp = false;
+        usedPowerUp = false;
     } else {
         enemyHP -= damage;
     }
+
+    enemyBet = false;
+    placedBet = false;
+    coins += coinGain;
 }
 
 function recDamage() {
-    if (placedBet == true) {
-        coins -= betValue * 2;
-
-        if (enemyBet == true) {
-            enemyCoins += betValue * 2;
-        } else {
-            enemyCoins += coinGain;
-        }
-
-        betValue += 10;
+    if (enemyBet == true) {
+        enemyCoins += betValue * 2;
+        betValue += betIncrease;
     }
 
     if (enemyPowerUp == true) {
         health -= enemyPowDmg;
         enemyPowerUp = false;
     } else {
-        health -= damage;
+        health -= enemyDmg;
     }
+
+    enemyBet = false;
+    placedBet = false;
+    enemyCoins += coinGain;
 }
