@@ -7,14 +7,19 @@ var dice4        =  0;
 //int
 var coins        =  0;
 var coinGain     =  10;
+var maxHealth    =  50;
 var health       =  50;
 var damage       =  1;
 var powDamage    =  5;
 var powCount     =  0;
 var shieldCount  =  0;
 var healCount    =  0;
+var healPower    =  10;
 var betValue     =  10;
 var betIncrease  =  10;
+var powPrice     =  20;
+var shieldPrice  =  10;
+var healPrice    =  10;
 
 //bool
 var placedBet    =  false;
@@ -30,6 +35,13 @@ const useShield  =  document.getElementById("useShield");
 const useHeal    =  document.getElementById("useHeal");
 const coinsText  =  document.getElementById("coinsCount");
 const healthText =  document.getElementById("health");
+const healText   =  document.getElementById("heals");
+const shieldText =  document.getElementById("shields");
+const powUpsText =  document.getElementById("powerUps");
+const gameImage  =  document.getElementById("gameImage");
+const buyPowerUp =  document.getElementById("buyPowerUp");
+const buyShield  =  document.getElementById("buyShield");
+const buyHeal    =  document.getElementById("buyHeal");
 
 //enemy int
 var enemyHP      =  50;
@@ -53,6 +65,12 @@ setInterval(() => {
         useShield.classList.remove("disabled");
         useHeal.classList.remove("disabled");
         powerUp.classList.remove("disabled");
+        powerUp.classList.add("btn-outline-light");
+        powerUp.classList.remove("btn-outline-success");
+        useHeal.classList.add("btn-outline-light");
+        useHeal.classList.remove("btn-outline-success");
+        useShield.classList.add("btn-outline-light");
+        useShield.classList.remove("btn-outline-success");
     }
 
     if (placedBet == true) {
@@ -61,8 +79,15 @@ setInterval(() => {
         placeBet.classList.remove("disabled");
     }
 
-    coinsText.innerHTML = "Coins: " + coins;
+    if (health > maxHealth) {
+        health = maxHealth;
+    }
+
+    coinsText.innerHTML  = "Coins: " + coins;
     healthText.innerHTML = "HP: " + health;
+    powUpsText.innerHTML = "Power ups: " + powCount;
+    shieldText.innerHTML = "Shields: " + shieldCount;
+    healText.innerHTML   = "Heals: " + healCount;
 }, 100);
 
 //event listeners
@@ -85,6 +110,8 @@ powerUp.addEventListener("click", () => {
         powCount--;
         useShield.classList.add("disabled");
         useHeal.classList.add("disabled");
+        powerUp.classList.remove("btn-outline-light");
+        powerUp.classList.add("btn-outline-success");
         powerUp.classList.add("disabled");
     } else {
         swal("No power up available", "", "error");
@@ -96,6 +123,8 @@ useShield.addEventListener("click", () => {
         usedShield = true;
         shieldCount--;
         useShield.classList.add("disabled");
+        useShield.classList.remove("btn-outline-light");
+        useShield.classList.add("btn-outline-success");
         useHeal.classList.add("disabled");
         powerUp.classList.add("disabled");
     } else {
@@ -109,20 +138,66 @@ useHeal.addEventListener("click", () => {
         healCount--;
         useShield.classList.add("disabled");
         useHeal.classList.add("disabled");
+        useHeal.classList.remove("btn-outline-light");
+        useHeal.classList.add("btn-outline-success");
         powerUp.classList.add("disabled");
     } else {
         swal("No healing items in your inventory.", "", "error");
     }
 });
 
+buyHeal.addEventListener("click", () => {
+    if (coins >= healPrice) {
+        healCount++;
+        coins -= healPrice;
+    } else {
+        swal("Not enough coins.", "", "error");
+    }
+});
+
+buyPowerUp.addEventListener("click", () => {
+    if (coins >= healPrice) {
+        powCount++;
+        coins -= powPrice;
+    } else {
+        swal("Not enough coins.", "", "error");
+    }
+});
+
+buyShield.addEventListener("click", () => {
+    if (coins >= healPrice) {
+        shieldCount++;
+        coins -= shieldPrice;
+    } else {
+        swal("Not enough coins.", "", "error");
+    }
+});
+
 //functions
 function diceRoll() {
+    if (usedHeal == true) {
+        health += healPower;
+        usedHeal = false;
+    }
+
     let randomNumber = [
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1
     ];
+
+    rollDice.classList.add("disabled");
+
+    gameImage.src = "./img/Dice roll.gif";
+    setTimeout(() => {
+        gameImage.src = "./img/Dice rolled.png";
+    }, 600);
+
+    setTimeout(() => {
+        gameImage.src = "./img/Dice default.gif";
+        rollDice.classList.remove("disabled");
+    }, 1800);
 
     dice1 = randomNumber[0];
     dice2 = randomNumber[1];
@@ -158,23 +233,28 @@ function doDamage() {
 
     enemyBet = false;
     placedBet = false;
+    usedShield = false;
+    usedPowerUp = false;
     coins += coinGain;
 }
 
 function recDamage() {
-    if (enemyBet == true) {
-        enemyCoins += betValue * 2;
-        betValue += betIncrease;
-    }
+    if (usedShield == false) {
+        if (enemyBet == true) {
+            enemyCoins += betValue * 2;
+            betValue += betIncrease;
+        }
 
-    if (enemyPowerUp == true) {
-        health -= enemyPowDmg;
-        enemyPowerUp = false;
-    } else {
-        health -= enemyDmg;
-    }
+        if (enemyPowerUp == true) {
+            health -= enemyPowDmg;
+            enemyPowerUp = false;
+        } else {
+            health -= enemyDmg;
+        }
 
-    enemyBet = false;
-    placedBet = false;
-    enemyCoins += coinGain;
+        enemyBet = false;
+        placedBet = false;
+        enemyCoins += coinGain;
+        usedPowerUp = false;
+    }
 }

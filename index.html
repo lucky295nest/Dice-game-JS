@@ -28,15 +28,21 @@
         <div class="col-sm-2 mt-5 shadow">
           <h5 class="m-3 fw-light" id="coinsCount">Coins</h5>
           <h5 class="m-3 fw-light" id="health">Health</h5>
+          <h5 class="m-3 fw-light" id="shields">Shields</h5>
+          <h5 class="m-3 fw-light" id="heals">Heals</h5>
+          <h5 class="m-3 fw-light" id="powerUps">Power ups</h5>
+          <button type="button" id="buyPowerUp" class="btn btn-outline-light rounded-0 ms-3 mt-2 w-75">Buy Power Up<br>20</button>
+          <button type="button" id="buyShield" class="btn btn-outline-light rounded-0 ms-3 mt-2 w-75">Buy Shield<br>10</button>
+          <button type="button" id="buyHeal" class="btn btn-outline-light rounded-0 mt-2 ms-3 mb-3 w-75">Buy Heal<br>10</button>
         </div>
         <div class="col-sm-8 mt-5">
           <div class="d-flex justify-content-center shadow">
-            <img src="./img/Dice default.gif" alt="default" class="img-fluid">
+            <img src="./img/Dice default.gif" id="gameImage" alt="default" class="img-fluid">
           </div>
         </div>
         <div class="col-sm-2 mt-5 shadow text-center">
           <button type="button" id="rollDice" class="btn btn-outline-light rounded-0 mt-3 w-75">Roll</button>
-          <button type="button" id="placeBet" class="btn btn-outline-light rounded-0 mt-2 w-75">Place bet</button>
+          <button type="button" id="placeBet" class="btn btn-outline-light rounded-0 mt-2 mb-4 w-75">Place bet</button>
           <button type="button" id="powerUp" class="btn btn-outline-light rounded-0 mt-2 w-75">Power Up</button>
           <button type="button" id="useShield" class="btn btn-outline-light rounded-0 mt-2 w-75">Use Shield</button>
           <button type="button" id="useHeal" class="btn btn-outline-light rounded-0 mt-2 mb-3 w-75">Use Heal</button>
@@ -47,10 +53,9 @@
         <table class="table table-dark table-bordered shadow m-5">
           <thead>
             <tr class="text-center">
-              <th>Your dice 1</th>
-              <th>Your dice 2</th>
-              <th>??? dice 1</th>
-              <th>??? dice 2</th>
+              <th>Your dice</th>
+              <th>??? dice</th>
+              <th>Success</th>
             </tr>
           </thead>
           <tbody>
