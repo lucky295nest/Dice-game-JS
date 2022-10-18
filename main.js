@@ -7,14 +7,14 @@ var dice4        =  0;
 //int
 var coins        =  0;
 var coinGain     =  10;
-var maxHealth    =  50;
-var health       =  50;
+var maxHealth    =  10;
+var health       =  10;
 var damage       =  1;
 var powDamage    =  5;
 var powCount     =  0;
 var shieldCount  =  0;
 var healCount    =  0;
-var healPower    =  10;
+var healPower    =  5;
 var betValue     =  10;
 var betIncrease  =  10;
 var powPrice     =  20;
@@ -28,23 +28,24 @@ var usedShield   =  false;
 var usedHeal     =  false;
  
 //id
-const rollDice   =  document.getElementById("rollDice");
-const placeBet   =  document.getElementById("placeBet");
-const powerUp    =  document.getElementById("powerUp");
-const useShield  =  document.getElementById("useShield");
-const useHeal    =  document.getElementById("useHeal");
-const coinsText  =  document.getElementById("coinsCount");
-const healthText =  document.getElementById("health");
-const healText   =  document.getElementById("heals");
-const shieldText =  document.getElementById("shields");
-const powUpsText =  document.getElementById("powerUps");
-const gameImage  =  document.getElementById("gameImage");
-const buyPowerUp =  document.getElementById("buyPowerUp");
-const buyShield  =  document.getElementById("buyShield");
-const buyHeal    =  document.getElementById("buyHeal");
+const rollDice    =  document.getElementById("rollDice");
+const placeBet    =  document.getElementById("placeBet");
+const powerUp     =  document.getElementById("powerUp");
+const useShield   =  document.getElementById("useShield");
+const useHeal     =  document.getElementById("useHeal");
+const coinsText   =  document.getElementById("coinsCount");
+const healthText  =  document.getElementById("health");
+const healText    =  document.getElementById("heals");
+const shieldText  =  document.getElementById("shields");
+const powUpsText  =  document.getElementById("powerUps");
+const gameImage   =  document.getElementById("gameImage");
+const buyPowerUp  =  document.getElementById("buyPowerUp");
+const buyShield   =  document.getElementById("buyShield");
+const buyHeal     =  document.getElementById("buyHeal");
+const enemyHealth =  document.getElementById("enemyHealth");
 
 //enemy int
-var enemyHP      =  50;
+var enemyHP      =  10;
 var enemyCoins   =  0;
 var enemyDmg     =  1;
 var enemyPowDmg  =  5;
@@ -83,11 +84,20 @@ setInterval(() => {
         health = maxHealth;
     }
 
-    coinsText.innerHTML  = "Coins: " + coins;
-    healthText.innerHTML = "HP: " + health;
-    powUpsText.innerHTML = "Power ups: " + powCount;
-    shieldText.innerHTML = "Shields: " + shieldCount;
-    healText.innerHTML   = "Heals: " + healCount;
+    if (health <= 0) {
+        console.log("lost the game");
+    }
+
+    if (enemyHP <= 0) {
+        console.log("won the game");
+    }
+
+    coinsText.innerHTML  = "Coins: "    + coins;
+    healthText.innerHTML = "HP: "       + health;
+    enemyHealth.innerHTML = "Enemy HP: " + enemyHP;
+    powerUp.innerHTML    = "Power Up&ensp;" + powCount;
+    useShield.innerHTML  = "Shields&nbsp;&emsp;&ensp;" + shieldCount;
+    useHeal.innerHTML    = "Heals&emsp;&emsp;&ensp;" + healCount;
 }, 100);
 
 //event listeners
@@ -156,7 +166,7 @@ buyHeal.addEventListener("click", () => {
 });
 
 buyPowerUp.addEventListener("click", () => {
-    if (coins >= healPrice) {
+    if (coins >= powPrice) {
         powCount++;
         coins -= powPrice;
     } else {
@@ -165,7 +175,7 @@ buyPowerUp.addEventListener("click", () => {
 });
 
 buyShield.addEventListener("click", () => {
-    if (coins >= healPrice) {
+    if (coins >= shieldPrice) {
         shieldCount++;
         coins -= shieldPrice;
     } else {
@@ -251,10 +261,10 @@ function recDamage() {
         } else {
             health -= enemyDmg;
         }
-
-        enemyBet = false;
-        placedBet = false;
         enemyCoins += coinGain;
-        usedPowerUp = false;
     }
+    enemyBet = false;
+    placedBet = false;
+    usedShield = false;
+    usedPowerUp = false;
 }
