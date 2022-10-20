@@ -5,7 +5,7 @@ var dice3        =  0;
 var dice4        =  0;
 
 //int
-var coins        =  0;
+var coins        =  10;
 var coinGain     =  10;
 var maxHealth    =  10;
 var health       =  10;
@@ -19,7 +19,7 @@ var betValue     =  10;
 var betIncrease  =  10;
 var powPrice     =  20;
 var shieldPrice  =  10;
-var healPrice    =  10;
+var healPrice    =  30;
 
 //bool
 var placedBet    =  false;
@@ -82,6 +82,10 @@ setInterval(() => {
 
     if (health > maxHealth) {
         health = maxHealth;
+    }
+
+    if (enemyHP > maxHealth) {
+        enemyHP = maxHealth;
     }
 
     if (health <= 0) {
@@ -190,6 +194,22 @@ function diceRoll() {
         usedHeal = false;
     }
 
+    let enemyChoice = Math.floor(Math.random() * 100) + 1;
+
+    if (enemyHP <= 5 && enemyCoins >= healPrice) {
+        enemyHP += healPower;
+        enemyCoins -= healPrice;
+        console.log("Enemy used heal.");
+    } else if (enemyChoice > 50 && enemyChoice <= 75 && enemyCoins >= powPrice && enemyHP > 5) {
+        enemyPowerUp = true;
+        enemyCoins -= powPrice;
+        console.log("Enemy used power up.");
+    } else if (enemyChoice > 75 && enemyChoice <= 100 && enemyCoins >= shieldPrice && enemyHP > 5) {
+        enemyShield = true;
+        enemyCoins -= shieldPrice;
+        console.log("Enemy used shield.");
+    }
+
     let randomNumber = [
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
@@ -241,6 +261,9 @@ function doDamage() {
         enemyHP -= damage;
     }
 
+    enemyHeal = false;
+    enemyShield = false;
+    enemyPowerUp = false;
     enemyBet = false;
     placedBet = false;
     usedShield = false;
@@ -263,6 +286,10 @@ function recDamage() {
         }
         enemyCoins += coinGain;
     }
+
+    enemyHeal = false;
+    enemyShield = false;
+    enemyPowerUp = false;
     enemyBet = false;
     placedBet = false;
     usedShield = false;
